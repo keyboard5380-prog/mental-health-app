@@ -3,6 +3,9 @@ import axios from 'axios'
 
 const AssessmentContext = createContext(null)
 
+// Get API base URL from environment or use relative path as fallback
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 export function AssessmentProvider({ children }) {
   const [sections, setSections] = useState([])
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
@@ -16,7 +19,7 @@ export function AssessmentProvider({ children }) {
   const loadQuestions = useCallback(async () => {
     try {
       setLoading(true)
-      const { data } = await axios.get('/api/assessment/questions/structured')
+      const { data } = await axios.get(`${API_BASE_URL}/assessment/questions/structured`)
       setSections(data.sections)
     } catch (err) {
       setError('Failed to load questions. Please ensure the backend is running.')
@@ -76,7 +79,7 @@ export function AssessmentProvider({ children }) {
         question_id,
         value
       }))
-      const { data } = await axios.post('/api/assessment/submit', {
+      const { data } = await axios.post(`${API_BASE_URL}/assessment/submit`, {
         answers: answerPayload
       })
       setResult(data)
