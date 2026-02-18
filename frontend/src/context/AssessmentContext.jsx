@@ -6,6 +6,14 @@ const AssessmentContext = createContext(null)
 // Get API base URL from environment or use relative path as fallback
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
+// Log API configuration for debugging
+console.log('📡 API Configuration:', {
+  API_BASE_URL,
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  isDevelopment: import.meta.env.DEV,
+  isProduction: import.meta.env.PROD
+})
+
 export function AssessmentProvider({ children }) {
   const [sections, setSections] = useState([])
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
@@ -19,9 +27,19 @@ export function AssessmentProvider({ children }) {
   const loadQuestions = useCallback(async () => {
     try {
       setLoading(true)
-      const { data } = await axios.get(`${API_BASE_URL}/assessment/questions/structured`)
+      const url = `${API_BASE_URL}/assessment/questions/structured`
+      console.log('📤 Fetching questions from:', url)
+      const { data } = await axios.get(url)
+      console.log('✅ Questions loaded successfully:', data)
       setSections(data.sections)
     } catch (err) {
+      console.error('❌ Failed to load questions:', {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        message: err.message,
+        url: err.config?.url,
+        data: err.response?.data
+      })
       setError('Failed to load questions. Please ensure the backend is running.')
     } finally {
       setLoading(false)
@@ -79,12 +97,22 @@ export function AssessmentProvider({ children }) {
         question_id,
         value
       }))
-      const { data } = await axios.post(`${API_BASE_URL}/assessment/submit`, {
+      const url = `${API_BASE_URL}/assessment/submit`
+      console.log('📤 Submitting assessment to:', url)
+      const { data } = await axios.post(url, {
         answers: answerPayload
       })
+      console.log('✅ Analysis completed:', data)
       setResult(data)
       setPhase('results')
     } catch (err) {
+      console.error('❌ Failed to submit assessment:', {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        message: err.message,
+        url: err.config?.url,
+        data: err.response?.data
+      })
       setError('Analysis failed. Please try again.')
     } finally {
       setLoading(false)
