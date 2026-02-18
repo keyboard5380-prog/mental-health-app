@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mental-health-api
+    runtime: python
+    pythonVersion: "3.12"
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://mental-health-app-63u5.vercel.app

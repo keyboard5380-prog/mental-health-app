@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.assessment import router as assessment_router
 import os
+import sys
 
 app = FastAPI(
     title="Psychotechnological Relationship Support API",
@@ -17,10 +18,14 @@ allowed_origins = [
     "https://mental-health-app-63u5.vercel.app",  # Your Vercel frontend
 ]
 
-# Add custom origins from environment if provided
-custom_origin = os.getenv("FRONTEND_URL")
-if custom_origin and custom_origin not in allowed_origins:
-    allowed_origins.append(custom_origin)
+# Allow all origins in production for flexibility
+if os.getenv("ENV") == "production":
+    allowed_origins = ["*"]
+else:
+    # Add custom origins from environment if provided
+    custom_origin = os.getenv("FRONTEND_URL")
+    if custom_origin and custom_origin not in allowed_origins:
+        allowed_origins.append(custom_origin)
 
 app.add_middleware(
     CORSMiddleware,
