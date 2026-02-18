@@ -10,19 +10,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Get allowed origins from environment or use defaults
-allowed_origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "https://mental-health-app-63u5.vercel.app",  # Your Vercel frontend
-]
+# Configure CORS based on environment
+env = os.getenv("ENV", "development").lower()
 
-# Allow all origins in production for flexibility
-if os.getenv("ENV") == "production":
+if env == "production":
+    # In production, allow all origins for flexibility
     allowed_origins = ["*"]
 else:
-    # Add custom origins from environment if provided
+    # In development, allow specific localhost origins
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "https://mental-health-app-63u5.vercel.app",
+    ]
+    
+    # Add custom origins from environment
     custom_origin = os.getenv("FRONTEND_URL")
     if custom_origin and custom_origin not in allowed_origins:
         allowed_origins.append(custom_origin)
