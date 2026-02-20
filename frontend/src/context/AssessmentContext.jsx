@@ -4,7 +4,7 @@ import axios from 'axios'
 const AssessmentContext = createContext(null)
 
 // Get API base URL from environment or use relative path as fallback
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '').replace(/\/$/, '') || '/api'
 
 // Log API configuration for debugging
 console.log('📡 API Configuration:', {
@@ -29,7 +29,7 @@ export function AssessmentProvider({ children }) {
       setLoading(true)
       const url = `${API_BASE_URL}/api/assessment/questions/structured`
       console.log('📤 Fetching questions from:', url)
-      const { data } = await axios.get(url)
+      const { data } = await axios.get(url, { timeout: 90000 })
       console.log('✅ Questions loaded successfully:', data)
       setSections(data.sections)
     } catch (err) {
@@ -99,9 +99,7 @@ export function AssessmentProvider({ children }) {
       }))
       const url = `${API_BASE_URL}/api/assessment/submit`
       console.log('📤 Submitting assessment to:', url)
-      const { data } = await axios.post(url, {
-        answers: answerPayload
-      })
+      const { data } = await axios.post(url, { answers: answerPayload }, { timeout: 90000 })
       console.log('✅ Analysis completed:', data)
       setResult(data)
       setPhase('results')
