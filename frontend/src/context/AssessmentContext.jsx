@@ -3,8 +3,10 @@ import axios from 'axios'
 
 const AssessmentContext = createContext(null)
 
-// Get API base URL from environment or use relative path as fallback
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '').replace(/\/$/, '') || '/api'
+// Get API base URL: env var, or production fallback to Render, or dev proxy
+const RAW = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '').trim()
+const PROD_FALLBACK = 'https://mental-health-app-t82u.onrender.com'
+const API_BASE_URL = (RAW || (import.meta.env.PROD ? PROD_FALLBACK : '')).replace(/\/$/, '') || '/api'
 
 // Log API configuration for debugging
 console.log('📡 API Configuration:', {
