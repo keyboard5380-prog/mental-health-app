@@ -27,7 +27,7 @@ export function AssessmentProvider({ children }) {
   const loadQuestions = useCallback(async () => {
     try {
       setLoading(true)
-      const url = `${API_BASE_URL}/assessment/questions/structured`
+      const url = `${API_BASE_URL}/api/assessment/questions/structured`
       console.log('📤 Fetching questions from:', url)
       const { data } = await axios.get(url)
       console.log('✅ Questions loaded successfully:', data)
@@ -97,7 +97,7 @@ export function AssessmentProvider({ children }) {
         question_id,
         value
       }))
-      const url = `${API_BASE_URL}/assessment/submit`
+      const url = `${API_BASE_URL}/api/assessment/submit`
       console.log('📤 Submitting assessment to:', url)
       const { data } = await axios.post(url, {
         answers: answerPayload
